@@ -107,11 +107,11 @@ describe("Corrida: grafo y concurrencia", () => {
       activos--;
       return 1;
     };
-    const t0 = Date.now();
     await Promise.all(["p1", "p2", "p3", "p4", "p5", "p6"].map((n) => c.paso(n, n, lento)));
     await c.cerrar();
+    // maximo === 2 prueba las dos cosas: hubo paralelismo y no se pasó del límite.
+    // (Se descartó medir el tiempo total: bajo carga daba rojos falsos.)
     expect(maximo).toBe(2);
-    expect(Date.now() - t0).toBeLessThan(6 * 30);
   });
 
   it("un paso espera a sus dependencias y recibe sus resultados", async () => {

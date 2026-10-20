@@ -5,7 +5,7 @@
  * Revertido.
  */
 import { spawn } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { mkdtemp, readdir, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -14,6 +14,14 @@ import { describe, expect, it } from "vitest";
 import { PASOS, pipelineLento } from "./apoyo/pipeline-lento.ts";
 
 const HIJO = fileURLToPath(new URL("./apoyo/hijo.ts", import.meta.url));
+
+function contarGuardados(dir: string): number {
+  try {
+    return readdirSync(join(dir, "pasos")).filter((n) => n.endsWith(".json")).length;
+  } catch {
+    return 0;
+  }
+}
 
 function lineas(bitacora: string): string[] {
   return existsSync(bitacora) ? readFileSync(bitacora, "utf8").trim().split("\n").filter(Boolean) : [];
@@ -24,7 +32,12 @@ async function lanzarYMatar(dir: string, bitacora: string, pasosAntes: number): 
   const hijo = spawn(process.execPath, [HIJO, dir, bitacora, "120"], { stdio: "inherit" });
   const fin = new Promise<void>((r) => hijo.on("exit", () => r()));
   const t0 = Date.now();
-  while (lineas(bitacora).filter((l) => l.startsWith(`fin `) && l.endsWith(` ${hijo.pid}`)).length < pasosAntes) {
+  const guardadosAlInicio = contarGuardados(dir);
+  // Se espera a que haya archivos de paso GUARDADOS, no a la línea "fin" de
+  // la bitácora: entre una y otro está la escritura, y bajo carga matar en
+  // ese hueco hacía que el test contara pasos que aún no estaban en disco.
+  while (contarGuardados(dir) - guardadosAlInicio < pasosAntes) {
+    if (hijo.exitCode !== null) break;
     if (Date.now() - t0 > 15_000) throw new Error("El hijo no avanzó.");
     await new Promise((r) => setTimeout(r, 5));
   }
