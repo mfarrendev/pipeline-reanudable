@@ -1,0 +1,4 @@
+node_modules
+dist
+ejemplo/salida
+*.tmp-*

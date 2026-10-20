@@ -1,0 +1,27 @@
+{
+  "name": "pipeline-reanudable",
+  "version": "0.1.0",
+  "description": "Motor mínimo de pipelines por pasos con estado en disco: reanuda sin volver a pagar lo ya hecho.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Max Farren",
+  "engines": {
+    "node": ">=24"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "ejemplo": "node ejemplo/pipeline.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "typescript": "5.9",
+    "vitest": "^4.1.12"
+  }
+}
