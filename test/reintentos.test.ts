@@ -1,3 +1,8 @@
+/*
+ * Medición (2026-10-20): esTransitorio trata ErrorPermanente como
+ * transitorio (`return false` -> `return true`). Cayó 1 de 5: "no
+ * reintenta un error permanente". Revertido.
+ */
 import { describe, expect, it } from "vitest";
 import {
   REINTENTO_POR_OMISION,

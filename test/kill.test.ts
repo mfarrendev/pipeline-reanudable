@@ -1,3 +1,9 @@
+/*
+ * Medición (2026-10-20): bloqueo.ts nunca roba el bloqueo de un proceso
+ * muerto (`dueno.host === hostname()` -> `false`). Cayeron 2 de 2: la
+ * reanudación tras kill -9 queda bloqueada por el archivo del hijo muerto.
+ * Revertido.
+ */
 import { spawn } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { mkdtemp, readdir, readFile } from "node:fs/promises";

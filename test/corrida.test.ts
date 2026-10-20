@@ -1,3 +1,15 @@
+/*
+ * Mediciones (2026-10-20): se introdujo cada defecto a mano en src/, se
+ * corrió este archivo y se revirtió. Corrieron las 15 pruebas cada vez.
+ *
+ * 1. corrida.ts: la huella ignora a las dependencias
+ *    (`dependencias: huellasDeps` -> `dependencias: {}`).
+ *    Cayeron 2 de 15: las dos de invalidación en cascada.
+ * 2. corrida.ts: no se reserva lo estimado (se borra `this.reservado += estimado`).
+ *    Cayeron 2 de 15: las dos del tope de gasto con estimación.
+ * 3. bloqueo.ts: el bloqueo no se borra al cerrar.
+ *    Cayeron 7 de 15: toda reanudación en la misma carpeta queda bloqueada.
+ */
 import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
